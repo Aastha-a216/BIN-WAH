@@ -1,0 +1,337 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Waste Material Based Products Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+  <style>
+    .font-playfair {
+      font-family: 'Playfair Display', serif;
+    }
+    .cart-slide, .checkout-slide {
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
+    }
+    .cart-slide.open, .checkout-slide.open {
+      transform: translateX(0);
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cart = [];
+      const cartIcon = document.getElementById('cart-icon');
+      const cartCount = document.getElementById('cart-count');
+      const cartSlide = document.getElementById('cart-slide');
+      const cartItemsContainer = document.getElementById('cart-items');
+      const checkoutSlide = document.getElementById('checkout-slide');
+      const productsLink = document.getElementById('products-link');
+      const productsSection = document.getElementById('products-section');
+      const aboutLink = document.getElementById('about-link');
+      const aboutSection = document.getElementById('about-section');
+      const contactLink = document.getElementById('contact-link');
+      const contactSection = document.getElementById('contact-section');
+      const discountLink = document.getElementById('discount-link');
+      const discountSection = document.getElementById('discount-section');
+
+      function updateCartCount() {
+        cartCount.textContent = cart.length;
+      }
+
+      function addToCart(product) {
+        cart.push(product);
+        updateCartCount();
+        renderCartItems();
+        cartSlide.classList.add('open');
+      }
+
+      function renderCartItems() {
+        cartItemsContainer.innerHTML = '';
+        cart.forEach((item, index) => {
+          const cartItem = document.createElement('div');
+          cartItem.className = 'flex justify-between items-center p-4 border-b';
+          cartItem.innerHTML = `
+            <div>
+              <h4 class="text-lg font-bold">${item.name}</h4>
+              <p class="text-gray-700">$${item.price}</p>
+            </div>
+            <button class="text-red-500" onclick="removeFromCart(${index})">
+              <i class="fas fa-trash"></i>
+            </button>
+          `;
+          cartItemsContainer.appendChild(cartItem);
+        });
+      }
+
+      window.removeFromCart = function(index) {
+        cart.splice(index, 1);
+        updateCartCount();
+        renderCartItems();
+      }
+
+      cartIcon.addEventListener('click', function() {
+        cartSlide.classList.toggle('open');
+      });
+
+      document.getElementById('checkout-button').addEventListener('click', function() {
+        cartSlide.classList.remove('open');
+        checkoutSlide.classList.add('open');
+      });
+
+      document.getElementById('close-checkout').addEventListener('click', function() {
+        checkoutSlide.classList.remove('open');
+      });
+
+      document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function() {
+          const product = {
+            name: this.dataset.name,
+            price: this.dataset.price
+          };
+          addToCart(product);
+        });
+      });
+
+      productsLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        productsSection.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      aboutLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        aboutSection.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      contactLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      discountLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        discountSection.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</head>
+<body class="font-roboto bg-gray-100">
+  <!-- Navbar -->
+  <nav class="bg-gray-800 p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <a class="text-white text-2xl font-bold font-playfair mr-8" href="#">Binwah</a>
+      <ul class="flex space-x-4 items-center">
+        <li><a class="text-white" href="#">Home</a></li>
+        <li><a class="text-white" href="#" id="products-link">Products</a></li>
+        <li><a class="text-white" href="#" id="about-link">About Us</a></li>
+        <li><a class="text-white" href="#" id="contact-link">Contact</a></li>
+        <li><a class="text-white" href="#" id="discount-link">Get Discount</a></li>
+        <li>
+          <a class="text-white relative cursor-pointer" id="cart-icon">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center" id="cart-count">0</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Cart Slide -->
+  <div class="fixed top-0 right-0 w-64 h-full bg-white shadow-lg cart-slide" id="cart-slide">
+    <div class="p-4 border-b flex justify-between items-center">
+      <h3 class="text-xl font-bold">Your Cart</h3>
+      <button class="text-gray-700" onclick="document.getElementById('cart-slide').classList.remove('open')">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="cart-items" class="p-4">
+      <!-- Cart items will be dynamically added here -->
+    </div>
+    <div class="p-4 border-t">
+      <button class="w-full bg-gray-800 text-white py-2 px-4 rounded" id="checkout-button">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <!-- Checkout Slide -->
+  <div class="fixed top-0 right-0 w-64 h-full bg-white shadow-lg checkout-slide" id="checkout-slide">
+    <div class="p-4 border-b flex justify-between items-center">
+      <h3 class="text-xl font-bold">Checkout</h3>
+      <button class="text-gray-700" id="close-checkout">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="p-4">
+      <form>
+        <div class="mb-4">
+          <label class="block text-gray-700" for="name">Name</label>
+          <input class="w-full p-2 border border-gray-300 rounded mt-2" id="name" type="text"/>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700" for="email">Email</label>
+          <input class="w-full p-2 border border-gray-300 rounded mt-2" id="email" type="email"/>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700" for="address">Address</label>
+          <input class="w-full p-2 border border-gray-300 rounded mt-2" id="address" type="text"/>
+        </div>
+        <button class="w-full bg-gray-800 text-white py-2 px-4 rounded" type="submit">Place Order</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="relative bg-cover bg-center py-24" style="background-image: url('https://storage.googleapis.com/a1aa/image/BIC3XLyYyZn5K8OH5uzNck0FbIwJ_LD-RLrI533Qkr4.jpg');">
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+    <div class="container mx-auto relative z-10 flex flex-col items-center md:flex-row md:items-center">
+      <div class="w-full md:w-1/2 text-center md:text-left px-4">
+        <h1 class="text-4xl md:text-5xl font-bold text-white">Trash Talk: We Make Waste Look Good!</h1>
+        <p class="mt-4 text-lg text-gray-200">Discover our range of eco-friendly products crafted from recycled materials. Shop now and make a difference!</p>
+        <a class="mt-6 inline-block bg-gray-800 text-white py-3 px-6 rounded hover:bg-gray-700 transition duration-300" href="#">Shop Now</a>
+      </div>
+      <div class="w-full md:w-1/2 mt-8 md:mt-0 px-4">
+        <img alt="A collection of eco-friendly products made from recycled materials displayed aesthetically" class="rounded shadow-lg" height="400" src="https://storage.googleapis.com/a1aa/image/BIC3XLyYyZn5K8OH5uzNck0FbIwJ_LD-RLrI533Qkr4.jpg" width="600"/>
+      </div>
+    </div>
+  </section>
+
+<!-- Products Section -->
+  <section class="py-12" id="products-section">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-bold text-center text-gray-800">Our Products</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+        <!-- Product 1 -->
+        <div class="bg-gray-100 p-4 rounded shadow-lg">
+          <img alt="Handcrafted vase made from recycled glass" class="w-full h-48 object-cover rounded" height="200" src="https://storage.googleapis.com/a1aa/image/Mj1WzEvmY1ppQE3gjQSDC0cMT41aYHSQUUB91HkLjXY.jpg" width="300"/>
+          <h3 class="text-xl font-bold mt-4 text-gray-800">Recycled Glass Vase</h3>
+          <p class="text-gray-700 mt-2">Beautiful vase made from 100% recycled glass.</p>
+          <p class="text-gray-800 font-bold mt-2">$25.00</p>
+          <button class="mt-4 inline-block bg-gray-800 text-white py-2 px-4 rounded add-to-cart" data-name="Recycled Glass Vase" data-price="25.00">Add to Cart</button>
+        </div>
+        <!-- Product 2 -->
+        <div class="bg-gray-100 p-4 rounded shadow-lg">
+          <img alt="Eco-friendly tote bag made from recycled fabric" class="w-full h-48 object-cover rounded" height="200" src="https://storage.googleapis.com/a1aa/image/TCwuQqJY6hA-zVAqgwAsfm2r0vuEWJ7RpdMpNFHPG-g.jpg" width="300"/>
+          <h3 class="text-xl font-bold mt-4 text-gray-800">Recycled Fabric Tote Bag</h3>
+          <p class="text-gray-700 mt-2">Durable tote bag made from recycled fabric.</p>
+          <p class="text-gray-800 font-bold mt-2">$15.00</p>
+          <button class="mt-4 inline-block bg-gray-800 text-white py-2 px-4 rounded add-to-cart" data-name="Recycled Fabric Tote Bag" data-price="15.00">Add to Cart</button>
+        </div>
+        <!-- Product 3 -->
+        <div class="bg-gray-100 p-4 rounded shadow-lg">
+          <img alt="Handmade notebook with recycled paper" class="w-full h-48 object-cover rounded" height="200" src="https://storage.googleapis.com/a1aa/image/5XN-nXrb02fs4CGCClvDUjfLiwUXkcsdaGd-hXhBI6w.jpg" width="300"/>
+          <h3 class="text-xl font-bold mt-4 text-gray-800">Recycled Paper Notebook</h3>
+          <p class="text-gray-700 mt-2">Notebook made from 100% recycled paper.</p>
+          <p class="text-gray-800 font-bold mt-2">$10.00</p>
+          <button class="mt-4 inline-block bg-gray-800 text-white py-2 px-4 rounded add-to-cart" data-name="Recycled Paper Notebook" data-price="10.00">Add to Cart</button>
+        </div>
+        <!-- Product 4 -->
+        <div class="bg-gray-100 p-4 rounded shadow-lg">
+          <img alt="Eco-friendly phone case made from recycled plastic" class="w-full h-48 object-cover rounded" height="200" src="https://storage.googleapis.com/a1aa/image/kgfoEeBLs9EL4WmBhlzA0NiCXGBv-ZYkvdlXyLS_CMM.jpg" width="300"/>
+          <h3 class="text-xl font-bold mt-4 text-gray-800">Recycled Plastic Phone Case</h3>
+          <p class="text-gray-700 mt-2">Stylish phone case made from recycled plastic.</p>
+          <p class="text-gray-800 font-bold mt-2">$12.00</p>
+          <button class="mt-4 inline-block bg-gray-800 text-white py-2 px-4 rounded add-to-cart" data-name="Recycled Plastic Phone Case" data-price="12.00">Add to Cart</button>
+        </div>
+        <!-- Product 5 -->
+        <div class="bg-gray-100 p-4 rounded shadow-lg">
+          <img alt="Handmade jewelry set made from recycled materials" class="w-full h-48 object-cover rounded" height="200" src="https://storage.googleapis.com/a1aa/image/tm9KqUrdDrrQHkI2a-Z56GgdpGJeHs2bvmd6PHToikk.jpg" width="300"/>
+          <h3 class="text-xl font-bold mt-4 text-gray-800">Recycled Material Jewelry Set</h3>
+          <p class="text-gray-700 mt-2">Elegant jewelry set made from recycled materials.</p>
+          <p class="text-gray-800 font-bold mt-2">$30.00</p>
+          <button class="mt-4 inline-block bg-gray-800 text-white py-2 px-4 rounded add-to-cart" data-name="Recycled Material Jewelry Set" data-price="30.00">Add to Cart</button>
+        </div>
+        <!-- Product 6 -->
+        <div class="bg-gray-100 p-4 rounded shadow-lg">
+          <img alt="Eco-friendly planter made from recycled materials" class="w-full h-48 object-cover rounded" height="200" src="https://storage.googleapis.com/a1aa/image/oGnGvM9v5e6Lb1so1JgipjkeWMmy4Ow6RYfWomSBoq0.jpg" width="300"/>
+          <h3 class="text-xl font-bold mt-4 text-gray-800">Recycled Material Planter</h3>
+          <p class="text-gray-700 mt-2">Stylish planter made from recycled materials.</p>
+          <p class="text-gray-800 font-bold mt-2">$20.00</p>
+          <button class="mt-4 inline-block bg-gray-800 text-white py-2 px-4 rounded add-to-cart" data-name="Recycled Material Planter" data-price="20.00">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+  <!-- About Section with images and discount info -->
+  <section class="py-12 bg-white" id="about-section">
+    <div class="container mx-auto max-w-6xl px-4">
+      <h2 class="text-4xl font-bold text-center mb-8 font-playfair">About Bin Wah</h2>
+      <div class="flex flex-col md:flex-row items-center gap-10">
+        <div class="md:w-1/2">
+          <p class="text-gray-700 text-lg leading-relaxed mb-6">
+            At Bin Wah, we transform waste materials into beautiful, eco-friendly products that help reduce environmental impact. Our mission is to promote sustainability through creative reuse of plastic, glass, fabric, and paper waste. Every purchase supports a circular economy and a cleaner planet.
+          </p>
+          <p class="text-green-700 text-lg font-semibold">
+            ♻️ Special Offer: Send us your clean plastic waste and earn up to 30% discount on your next purchase! Join our movement to make waste valuable and benefit from savings on our unique recycled products.
+          </p>
+        </div>
+        <div class="md:w-1/2 grid grid-cols-2 gap-4">
+          <img src="https://storage.googleapis.com/a1aa/image/oGnGvM9v5e6Lb1so1JgipjkeWMmy4Ow6RYfWomSBoq0.jpg" alt="Eco-friendly planter" class="rounded shadow-lg"/>
+          <img src="https://storage.googleapis.com/a1aa/image/tm9KqUrdDrrQHkI2a-Z56GgdpGJeHs2bvmd6PHToikk.jpg" alt="Recycled jewelry set" class="rounded shadow-lg"/>
+          <img src="https://storage.googleapis.com/a1aa/image/Mj1WzEvmY1ppQE3gjQSDC0cMT41aYHSQUUB91HkLjXY.jpg" alt="Recycled glass vase" class="rounded shadow-lg"/>
+          <img src="https://storage.googleapis.com/a1aa/image/TCwuQqJY6hA-zVAqgwAsfm2r0vuEWJ7RpdMpNFHPG-g.jpg" alt="Recycled fabric tote bag" class="rounded shadow-lg"/>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="py-12" id="contact-section">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-bold text-center text-gray-800">Contact Us</h2>
+      <div class="flex flex-col md:flex-row mt-8">
+        <div class="md:w-1/2 px-4">
+          <img alt="Contact us illustration showing communication and support" height="400" src="https://storage.googleapis.com/a1aa/image/55TG2K1HS8Ww_8nktSdrPBnUevSWqsaMdcpBiiLVVjk.jpg" width="600"/>
+        </div>
+        <div class="md:w-1/2 mt-8 md:mt-0 px-4">
+          <form class="bg-white p-8 rounded shadow">
+            <div class="mb-4">
+              <label class="block text-gray-700" for="contact-name">Name</label>
+              <input class="w-full p-2 border border-gray-300 rounded mt-2" id="contact-name" type="text"/>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700" for="contact-email">Email</label>
+              <input class="w-full p-2 border border-gray-300 rounded mt-2" id="contact-email" type="email"/>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700" for="contact-message">Message</label>
+              <textarea class="w-full p-2 border border-gray-300 rounded mt-2" id="contact-message"></textarea>
+            </div>
+            <button class="
+  <!-- Discount Form Section -->
+  <section class="py-12 bg-white" id="discount-section">
+    <div class="container mx-auto max-w-3xl px-4">
+      <h2 class="text-4xl font-bold text-center mb-8 font-playfair">Get Your Discount</h2>
+      <p class="text-center text-gray-700 mb-6">
+        Send us details of your clean plastic waste to earn up to <span class="font-semibold text-green-700">30% discount</span> on your next purchase!
+      </p>
+      <form class="bg-gray-50 p-8 rounded shadow-md" id="discount-form">
+        <div class="mb-6">
+          <label for="name" class="block text-gray-700 font-semibold mb-2">Full Name</label>
+          <input type="text" id="name" name="name" required class="w-full p-3 border border-gray-300 rounded" placeholder="Your full name"/>
+        </div>
+        <div class="mb-6">
+          <label for="email" class="block text-gray-700 font-semibold mb-2">Email Address</label>
+          <input type="email" id="email" name="email" required class="w-full p-3 border border-gray-300 rounded" placeholder="Your email"/>
+        </div>
+        <div class="mb-6">
+          <label for="quantity" class="block text-gray-700 font-semibold mb-2">Plastic Waste Quantity (in kg)</label>
+          <input type="number" id="quantity" name="quantity" min="0" step="0.1" required class="w-full p-3 border border-gray-300 rounded" placeholder="e.g., 2.5"/>
+        </div>
+        <div class="mb-6">
+          <label for="pickup" class="block text-gray-700 font-semibold mb-2">Preferred Pickup Address</label>
+          <textarea id="pickup" name="pickup" rows="3" required class="w-full p-3 border border-gray-300 rounded" placeholder="Enter your pickup address"></textarea>
+        </div>
+        <button type="submit" class="w-full bg-green-700 text-white py-3 rounded hover:bg-green-800 transition duration-300">Submit</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="bg-gray-800 py-6 text-center text-white mt-12">
+    <p>© 2025 Bin Wah. All rights reserved.</p>
+  </footer>
+</body>
+</html>
